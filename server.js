@@ -15,8 +15,8 @@ app.use(express.static(path.join(__dirname)));
 
 // 2. SETUP RAZORPAY (Ensure these are your LIVE keys)
 const razorpay = new Razorpay({
-    key_id: 'rzp_live_S2A32M4urkBliq',       
-    key_secret: 'tSnygg1qQAYHDJFxL4yrzCrp'   
+    key_id: process.env.RAZORPAY_KEY_ID,       
+    key_secret: process.env.RAZORPAY_KEY_SECRET   
 });
 
 // 3. SETUP DATABASE
