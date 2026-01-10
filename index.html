@@ -420,9 +420,11 @@
     <footer>
         <div class="container">
             <div class="f-links">
-                <a href="#">Terms of Service</a>
-                <a href="#">Privacy Policy</a>
-                <a href="mailto:support@yourdomain.com">Support</a>
+                <a href="terms.html">Terms of Service</a>
+                <a href="privacy.html">Privacy Policy</a>
+                <a href="refund.html">Refund Policy</a>
+                <a href="shipping.html">Delivery Policy</a>
+                <a href="contact.html">Contact Us</a>
             </div>
             <p style="margin-top: 20px;">&copy; 2026 AutoFlow Plus.</p>
         </div>
@@ -454,12 +456,13 @@
     document.getElementById('rzp-button1').onclick = async function(e){
         e.preventDefault();
         
-        const backendOrderUrl = 'http://localhost:3000/create-order'; 
+        // 1. Point to your Render URL
+        const backendOrderUrl = 'https://autoflow-app-u9hv.onrender.com/create-order'; 
 
         try {
-            console.log("1. Button clicked. Attempting to fetch order ID...");
+            console.log("1. Button clicked. Attempting to fetch order ID from Render...");
             
-            // Step 1: Ask Backend to create an order
+            // Step 1: Ask Backend (Render) to create an order
             const response = await fetch(backendOrderUrl, {
                 method: 'POST',
                 headers: {'Content-Type': 'application/json'},
@@ -467,7 +470,7 @@
             });
 
             if (!response.ok) {
-                alert("Error: Could not connect to backend. Check Console.");
+                alert("Error: Could not connect to the cloud server. Please try again.");
                 throw new Error(`Server returned ${response.status} ${response.statusText}`);
             }
 
@@ -476,21 +479,19 @@
 
             // Step 2: Configure Razorpay Options
             var options = {
-                "key": "rzp_live_S2A32M4urkBliq", //
+                "key": "rzp_live_S2A32M4urkBliq", // Your Live Key ID
                 "amount": orderData.amount, 
                 "currency": orderData.currency,
                 "name": "AutoFlow Plus",
                 "description": "Pro License Purchase",
                 "image": "https://autoflowplus.com/logo.png",
                 "order_id": orderData.id, 
-                // [CHANGED] Handler is now 'async' to support awaiting verification
                 "handler": async function (response){
                     
-                    // Alert the user that payment is done and verification is starting
-                    alert("Payment Successful! Verifying and generating license...");
+                    alert("Payment Successful! Verifying with server...");
 
-                    // Step 4: Ask the server to verify signature and give us the key
-                    const result = await fetch('http://localhost:3000/verify-payment', {
+                    // Step 4: Ask Render Server to verify and give us the key
+                    const result = await fetch('https://autoflow-app-u9hv.onrender.com/verify-payment', {
                         method: 'POST',
                         headers: {'Content-Type': 'application/json'},
                         body: JSON.stringify({
@@ -529,7 +530,7 @@
 
         } catch (error) {
             console.error("PAYMENT ERROR:", error);
-            alert("Payment initialization failed. Please check the console for details.");
+            alert("Payment initialization failed. Is the server waking up? Try again in 10 seconds.");
         }
     }
     </script>
