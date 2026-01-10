@@ -1,0 +1,538 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    
+    <title>AutoFlow Plus | Professional System Continuity & Session Manager</title>
+    <meta name="description" content="Enterprise-grade session management software. Prevent screen sleep, maintain VPN connections, and ensure remote workspace availability without admin rights.">
+    <meta name="keywords" content="session keep alive, prevent screen lock, vpn connection manager, remote presence tool, workflow continuity, system awake utility">
+    <meta name="robots" content="index, follow">
+    <link rel="canonical" href="https://autoflowplus.com/">
+
+    <meta property="og:title" content="AutoFlow Plus | System Continuity Manager">
+    <meta property="og:description" content="Ensure uninterrupted workflows. Prevent idle timeouts during rendering, data migration, and presentations.">
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://autoflowplus.com/">
+    <meta property="og:image" content="dashboard_ui.png">
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+
+    <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "SoftwareApplication",
+      "name": "AutoFlow Plus",
+      "url": "https://autoflowplus.com/",
+      "operatingSystem": "Windows 10, Windows 11",
+      "applicationCategory": "ProductivityApplication",
+      "offers": {
+        "@type": "Offer",
+        "price": "30.00",
+        "priceCurrency": "USD",
+        "availability": "https://schema.org/InStock"
+      },
+      "aggregateRating": {
+        "@type": "AggregateRating",
+        "ratingValue": "4.8",
+        "ratingCount": "1240"
+      },
+      "description": "Professional session management and activity simulation software for maintaining system continuity."
+    }
+    </script>
+
+    <style>
+        /* --- VARIABLES --- */
+        :root {
+            --bg-body: #050505;
+            --bg-card: #0f0f0f;
+            --bg-card-hover: #161616;
+            --accent: #3B8ED0;
+            --accent-glow: rgba(59, 142, 208, 0.15);
+            --green: #2CC985;
+            --text-main: #ffffff;
+            --text-muted: #a1a1aa;
+            --border: #27272a;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        html { scroll-behavior: smooth; }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--bg-body);
+            color: var(--text-main);
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+
+        img { max-width: 100%; height: auto; display: block; }
+        
+        .hero-bg {
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+            background-image: url('hero_bg.jpg'); 
+            background-size: cover; background-position: center;
+            opacity: 0.15; z-index: -1;
+            mask-image: linear-gradient(to bottom, black 20%, transparent 100%);
+            -webkit-mask-image: linear-gradient(to bottom, black 20%, transparent 100%);
+        }
+
+        .comparison-img {
+            margin-top: 60px; border: 1px solid var(--border); border-radius: 12px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.5); opacity: 0.8;
+        }
+
+        .ui-mockup-img {
+            border-radius: 12px; border: 1px solid #333;
+            box-shadow: 0 20px 50px rgba(0,0,0,0.5);
+        }
+
+        /* --- UTILITIES --- */
+        .container { max-width: 1200px; margin: 0 auto; padding: 0 5%; }
+        .text-gradient { background: linear-gradient(to right, #fff, #9ca3af); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+        
+        .reveal { opacity: 0; transform: translateY(30px); transition: all 0.8s cubic-bezier(0.5, 0, 0, 1); }
+        .reveal.active { opacity: 1; transform: translateY(0); }
+
+        /* --- NAVIGATION --- */
+        nav {
+            position: fixed; top: 0; width: 100%; padding: 15px 0;
+            background: rgba(5, 5, 5, 0.9); backdrop-filter: blur(12px);
+            border-bottom: 1px solid var(--border); z-index: 1000;
+        }
+        .nav-inner { display: flex; justify-content: space-between; align-items: center; }
+        .logo { font-size: 20px; font-weight: 800; letter-spacing: -0.5px; color: white; text-decoration: none; }
+        .logo span { color: var(--accent); }
+        
+        .nav-links { display: flex; gap: 30px; align-items: center; }
+        .nav-links a { color: var(--text-muted); font-size: 14px; font-weight: 500; text-decoration: none; transition: 0.2s; }
+        .nav-links a:hover { color: white; }
+        
+        .btn-sm { background: var(--accent); color: white; padding: 8px 16px; border-radius: 6px; font-size: 13px; font-weight: 600; text-decoration: none; transition: 0.3s; }
+        .btn-sm:hover { background: #2a7ab8; }
+
+        .mobile-menu-btn { display: none; font-size: 24px; cursor: pointer; color: white; }
+
+        /* --- HERO & SECTIONS --- */
+        header { padding: 180px 0 120px; text-align: center; position: relative; }
+        .hero-badge { display: inline-block; background: rgba(20, 20, 20, 0.8); border: 1px solid var(--border); padding: 6px 14px; border-radius: 30px; font-size: 12px; font-weight: 500; margin-bottom: 25px; color: var(--accent); }
+        h1 { font-size: 64px; line-height: 1.1; letter-spacing: -2px; margin-bottom: 25px; font-weight: 800; }
+        .subtitle { font-size: 18px; color: var(--text-muted); max-width: 650px; margin: 0 auto 40px; }
+        .cta-box { display: flex; gap: 15px; justify-content: center; margin-bottom: 30px; }
+        .btn-primary { background: white; color: black; padding: 14px 32px; border-radius: 8px; font-weight: 600; text-decoration: none; transition: 0.3s; cursor: pointer; border:none; font-family: inherit;}
+        .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 10px 30px rgba(255,255,255,0.1); }
+        .btn-outline { background: rgba(255,255,255,0.05); color: white; border: 1px solid var(--border); padding: 14px 32px; border-radius: 8px; font-weight: 600; text-decoration: none; transition: 0.3s; }
+        .btn-outline:hover { background: rgba(255,255,255,0.1); border-color: #555; }
+        .trust-badges { display: flex; justify-content: center; gap: 20px; opacity: 0.7; margin-bottom: 60px; }
+        .trust-item { display: flex; align-items: center; gap: 8px; font-size: 13px; color: var(--green); font-weight: 500; }
+        .trust-item svg { width: 16px; fill: currentColor; }
+        .logos { display: flex; gap: 40px; justify-content: center; flex-wrap: wrap; opacity: 0.6; margin-top: 40px; font-size: 13px; font-weight: 600; color: #555; text-transform: uppercase; letter-spacing: 1px; }
+        
+        section { padding: 100px 0; border-bottom: 1px solid var(--border); }
+        .section-header { text-align: center; margin-bottom: 70px; }
+        .section-header h2 { font-size: 36px; font-weight: 700; margin-bottom: 15px; color: white; letter-spacing: -1px; }
+        .section-header p { color: var(--text-muted); max-width: 500px; margin: 0 auto; }
+
+        .grid-3 { display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 30px; }
+        .feature-card { background: var(--bg-card); border: 1px solid var(--border); padding: 40px; border-radius: 12px; transition: 0.3s; }
+        .feature-card:hover { border-color: #444; background: var(--bg-card-hover); transform: translateY(-5px); }
+        .icon-box { width: 48px; height: 48px; background: var(--bg-card-hover); border-radius: 8px; display: flex; align-items: center; justify-content: center; margin-bottom: 25px; color: var(--accent); }
+        .icon-box svg { width: 24px; height: 24px; fill: currentColor; }
+        .feature-card h3 { font-size: 18px; font-weight: 600; margin-bottom: 12px; color: white; }
+        .feature-card p { font-size: 15px; color: var(--text-muted); line-height: 1.6; }
+
+        .guide-block { display: flex; align-items: center; gap: 60px; margin-bottom: 100px; }
+        .guide-block:nth-child(even) { flex-direction: row-reverse; }
+        .guide-text { flex: 1; }
+        .guide-text h3 { font-size: 28px; margin-bottom: 20px; color: white; }
+        .guide-text p { color: var(--text-muted); margin-bottom: 20px; font-size: 16px; }
+        .guide-text li { margin-bottom: 10px; color: var(--text-muted); display: flex; align-items: center; gap: 10px; }
+        .guide-text svg { width: 18px; fill: var(--green); }
+        .guide-visual { flex: 1; display: flex; align-items: center; justify-content: center; }
+
+        /* --- BLOG SECTION (NEW) --- */
+        .blog-card { display: flex; flex-direction: column; height: 100%; }
+        .blog-img { width: 100%; height: 200px; object-fit: cover; border-radius: 8px; margin-bottom: 20px; opacity: 0.8; transition: 0.3s; }
+        .blog-card:hover .blog-img { opacity: 1; }
+        .blog-meta { font-size: 12px; color: var(--accent); margin-bottom: 10px; font-weight: 600; }
+        .blog-title { font-size: 20px; color: white; margin-bottom: 10px; font-weight: 700; line-height: 1.4; }
+        .blog-excerpt { font-size: 14px; color: var(--text-muted); margin-bottom: 20px; flex-grow: 1; }
+        .read-more { color: white; font-size: 13px; font-weight: 600; text-decoration: none; display: flex; align-items: center; gap: 5px; }
+        .read-more:hover { color: var(--accent); }
+
+        /* --- PRICING & FAQ --- */
+        .pricing-container { display: flex; justify-content: center; gap: 30px; flex-wrap: wrap; max-width: 900px; margin: 0 auto; }
+        .price-card { flex: 1; min-width: 300px; background: var(--bg-card); border: 1px solid var(--border); padding: 40px; border-radius: 16px; position: relative; }
+        .price-card.pro { border: 1px solid var(--accent); background: radial-gradient(circle at top right, var(--accent-glow), var(--bg-card)); }
+        .tag { position: absolute; top: 20px; right: 20px; background: var(--accent); color: white; font-size: 11px; font-weight: 700; padding: 4px 10px; border-radius: 20px; text-transform: uppercase; }
+        .p-price { font-size: 42px; font-weight: 800; margin: 20px 0; color: white; }
+        .p-features li { margin-bottom: 12px; color: var(--text-muted); font-size: 14px; display: flex; align-items: center; gap: 10px; }
+        .p-features svg { width: 16px; fill: var(--green); }
+        .guarantee { display: flex; align-items: center; justify-content: center; gap: 8px; margin-top: 15px; font-size: 12px; color: var(--text-muted); }
+        .guarantee svg { width: 14px; fill: var(--accent); }
+
+        .faq-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 40px; }
+        .faq-item h4 { color: white; font-size: 18px; margin-bottom: 10px; }
+        .faq-item p { color: var(--text-muted); font-size: 15px; }
+
+        .stars { color: #FFD700; margin-bottom: 15px; font-size: 18px; }
+        .review-text { font-style: italic; color: var(--text-muted); margin-bottom: 20px; }
+        .reviewer { color: white; font-weight: 600; font-size: 14px; }
+
+        footer { border-top: 1px solid var(--border); padding: 60px 0; text-align: center; color: #555; font-size: 13px; }
+        .f-links a { color: #555; margin: 0 15px; text-decoration: none; }
+
+        .mobile-sticky-cta { position: fixed; bottom: 0; left: 0; width: 100%; background: #111; border-top: 1px solid #333; padding: 15px 20px; display: none; justify-content: space-between; align-items: center; z-index: 9999; box-shadow: 0 -10px 20px rgba(0,0,0,0.5); }
+
+        @media (max-width: 768px) {
+            h1 { font-size: 42px; }
+            .mobile-menu-btn { display: block; }
+            .nav-links { position: fixed; top: 60px; left: 0; width: 100%; background: #0f0f0f; flex-direction: column; padding: 40px; display: none; border-bottom: 1px solid #333; }
+            .nav-links.active { display: flex; }
+            .faq-grid { grid-template-columns: 1fr; }
+            .guide-block, .guide-block:nth-child(even) { flex-direction: column; }
+            .mobile-sticky-cta { display: flex; }
+            footer { padding-bottom: 100px; }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="bg-mesh"></div>
+    <div class="hero-bg"></div>
+
+    <nav>
+        <div class="container nav-inner">
+            <a href="index.html" class="logo">AutoFlow<span>Plus</span></a>
+            <div class="mobile-menu-btn" onclick="toggleMenu()">☰</div>
+            <div class="nav-links">
+                <a href="#features">Features</a>
+                <a href="#guide">How It Works</a>
+                <a href="#pricing">Pricing</a>
+                <a href="#blog">Resources</a>
+                <a href="#faq">FAQ</a>
+                <a href="#download" class="btn-sm">Download</a>
+            </div>
+        </div>
+    </nav>
+
+    <header class="container" id="home">
+        <div class="hero-badge reveal">Updated for 2026</div>
+        <h1 class="reveal">Maintain Your <br><span class="text-gradient">Digital Continuity.</span></h1>
+        <p class="subtitle reveal">The professional tool for System Availability. Prevent idle timeouts, maintain VPN connections, and manage remote sessions with intelligent activity simulation.</p>
+        
+        <div class="cta-box reveal">
+            <a href="#pricing" class="btn-primary">Get License - $30</a>
+            <a href="#download" class="btn-outline">Try Free Trial</a>
+        </div>
+
+        <div class="trust-badges reveal">
+            <div class="trust-item"><svg viewBox="0 0 24 24"><path d="M12 2L3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5l-9-3zm-2 16l-4-4 1.41-1.41L10 15.17l6.59-6.59L18 10l-8 8z"/></svg> VirusTotal Clean</div>
+            <div class="trust-item"><svg viewBox="0 0 24 24"><path d="M12 2L3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5l-9-3zm-2 16l-4-4 1.41-1.41L10 15.17l6.59-6.59L18 10l-8 8z"/></svg> Digitally Signed</div>
+        </div>
+
+        <div class="logos reveal">
+            <span>Microsoft Teams</span> • <span>Cisco AnyConnect</span> • <span>AWS Workspaces</span> • <span>Citrix</span> • <span>Slack</span>
+        </div>
+    </header>
+
+    <section id="features">
+        <div class="container">
+            <div class="section-header reveal">
+                <h2>Prevent Screen Sleep & Keep Teams Active</h2>
+                <p>Designed for IT professionals, data analysts, and remote teams who need uninterrupted active sessions.</p>
+            </div>
+            <div class="grid-3">
+                <div class="feature-card reveal">
+                    <div class="icon-box"><svg viewBox="0 0 24 24"><path d="M20 3H4a2 2 0 00-2 2v14a2 2 0 002 2h16a2 2 0 002-2V5a2 2 0 00-2-2zm-9 14H5v-2h6v2zm0-4H5v-2h6v2zm0-4H5V7h6v2zm8 8H13v-2h6v2zm0-4H13v-2h6v2zm0-4H13V7h6v2z"/></svg></div>
+                    <h3>Intelligent Session Keeper</h3>
+                    <p>Prevents screen lock and sleep mode during long data transfers, rendering tasks, or presentations by simulating active input.</p>
+                </div>
+                <div class="feature-card reveal">
+                    <div class="icon-box"><svg viewBox="0 0 24 24"><path d="M12 2C6.5 2 2 6.5 2 12s4.5 10 10 10 10-4.5 10-10S17.5 2 12 2zm4.2 14.2L11 13V7h1.5v5.2l4.5 2.7-.8 1.3z"/></svg></div>
+                    <h3>Wellness Intervals</h3>
+                    <p>Includes smart logic that allows for scheduled downtime, promoting healthy work habits without triggering system idle states prematurely.</p>
+                </div>
+                <div class="feature-card reveal">
+                    <div class="icon-box"><svg viewBox="0 0 24 24"><path d="M12 1L3 5v6c0 5.5 3.8 10.7 9 12 5.2-1.3 9-6.5 9-12V5l-9-4zm0 10.9c-1.6 0-3-1.3-3-3s1.3-3 3-3 3 1.3 3 3-1.3 3-3 3z"/></svg></div>
+                    <h3>Enterprise Security</h3>
+                    <p>Your license is hardware-locked for security. The software runs locally with no cloud dependencies, ensuring data privacy.</p>
+                </div>
+            </div>
+            <div class="reveal" style="display:flex; justify-content:center;">
+                <img src="Jiggler.png" alt="Graph comparing interrupted vs continuous workflow pattern" width="800" height="400" loading="lazy" class="comparison-img">
+            </div>
+        </div>
+    </section>
+
+    <section id="guide">
+        <div class="container">
+            <div class="section-header reveal">
+                <h2>Safe Zone & Activity Metrics Dashboard</h2>
+                <p>Advanced features to manage your workspace activity with precision.</p>
+            </div>
+            <div class="guide-block reveal">
+                <div class="guide-text">
+                    <h3>1. Focused Operational Area</h3>
+                    <p>Prevent accidental interruptions to your work. Define a specific "Safe Zone" where the software is allowed to interact.</p>
+                    <ul>
+                        <li><svg viewBox="0 0 24 24"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg> <strong>Custom Boundary:</strong> Draw a box on an empty part of your desktop.</li>
+                        <li><svg viewBox="0 0 24 24"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg> <strong>Fail-Safe:</strong> Input simulation is strictly confined to this area.</li>
+                    </ul>
+                </div>
+                <div class="guide-visual">
+                    <img src="dashboard_ui.png" alt="AutoFlow Plus Dashboard Interface with Safe Zone and Activity Metrics" width="600" height="400" loading="lazy" class="ui-mockup-img">
+                </div>
+            </div>
+            <div class="guide-block reveal">
+                <div class="guide-text">
+                    <h3>2. Productivity Metrics</h3>
+                    <p>Track your system uptime and activity levels. Useful for freelancers and contractors billing by the hour who need to verify active system time.</p>
+                    <ul>
+                        <li><svg viewBox="0 0 24 24"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg> <strong>Time Tracking:</strong> Monitor active session duration in real-time.</li>
+                        <li><svg viewBox="0 0 24 24"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg> <strong>Activity Logs:</strong> Visualize input density over time to ensure compliance.</li>
+                    </ul>
+                </div>
+            </div>
+            <div class="reveal">
+                <table class="comparison-table">
+                    <thead>
+                        <tr><th>Comparison</th><th>Sleep Blockers</th><th>Basic Scripts</th><th class="best-header best-col">AutoFlow Plus</th></tr>
+                    </thead>
+                    <tbody>
+                        <tr><td>Prevents Sleep Mode</td><td>Constant On</td><td>Static</td><td class="best-col"><span class="check">✔</span> Dynamic Input</td></tr>
+                        <tr><td>Collaboration Status</td><td><span class="cross">✘</span> Unreliable</td><td><span class="cross">✘</span> No</td><td class="best-col"><span class="check">✔</span> Keeps Teams Active</td></tr>
+                        <tr><td>Schedule Management</td><td><span class="cross">✘</span> No</td><td><span class="cross">✘</span> No</td><td class="best-col"><span class="check">✔</span> Timed Intervals</td></tr>
+                        <tr><td>Operational Safety</td><td><span class="cross">✘</span> No</td><td><span class="cross">✘</span> No</td><td class="best-col"><span class="check">✔</span> Safe Zone</td></tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </section>
+
+    <section id="reviews" style="background: #080808;">
+        <div class="container">
+            <div class="section-header reveal"><h2>User Feedback</h2></div>
+            <div class="grid-3">
+                <div class="feature-card reveal"><div class="stars">★★★★★</div><p class="review-text">"Essential for large data migrations. It keeps my VDI session active overnight so uploads don't fail due to timeouts."</p><p class="reviewer">- James L., Data Engineer</p></div>
+                <div class="feature-card reveal"><div class="stars">★★★★★</div><p class="review-text">"Helps me maintain 'Available' status on Teams while I'm reviewing physical documents or sketching on my iPad."</p><p class="reviewer">- Sarah K., UX Designer</p></div>
+                <div class="feature-card reveal"><div class="stars">★★★★★</div><p class="review-text">"I use the Safe Zone feature to keep my render machine awake without interfering with the 3D software window."</p><p class="reviewer">- David R., VFX Artist</p></div>
+            </div>
+        </div>
+    </section>
+
+    <section id="blog">
+        <div class="container">
+            <div class="section-header reveal">
+                <h2>Resources & Insights</h2>
+                <p>Expert tips on remote workflow optimization and system continuity.</p>
+            </div>
+            <div class="grid-3">
+                <div class="feature-card reveal blog-card">
+                    <img src="https://images.unsplash.com/photo-1593642632823-8f7856677741?auto=format&fit=crop&w=800" alt="Microsoft Teams Interface" class="blog-img">
+                    <div class="blog-meta">Productivity • 4 min read</div>
+                    <h3 class="blog-title">How to Keep Microsoft Teams Green While Reading Documents</h3>
+                    <p class="blog-excerpt">Discover why Teams marks you as "Away" when you are actually working, and how to maintain your active status professionally.</p>
+                    <a href="blog-keeping-teams-green.html" class="read-more">Read Article →</a>
+                </div>
+                <div class="feature-card reveal blog-card">
+                    <img src="https://images.unsplash.com/photo-1518770660439-4636190af475?auto=format&fit=crop&w=800" alt="Computer Hardware" class="blog-img">
+                    <div class="blog-meta">Security • 3 min read</div>
+                    <h3 class="blog-title">The Dangers of Physical Mouse Jigglers vs. Software</h3>
+                    <p class="blog-excerpt">Why plugging unknown USB devices into corporate laptops is a security risk, and why software solutions are safer.</p>
+                    <a href="blog-hardware-vs-software.html" class="read-more">Read Article →</a>
+                </div>
+                <div class="feature-card reveal blog-card">
+                    <img src="https://images.unsplash.com/photo-1563986768609-322da13575f3?auto=format&fit=crop&w=800" alt="Data Server" class="blog-img">
+                    <div class="blog-meta">Tech Support • 5 min read</div>
+                    <h3 class="blog-title">How to Prevent VPN Timeouts on Citrix & AnyConnect</h3>
+                    <p class="blog-excerpt">Large file transfers failing overnight? Learn how to keep your secure tunnel active without violating IT policies.</p>
+                    <a href="blog-prevent-vpn-timeout.html" class="read-more">Read Article →</a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="pricing">
+        <div class="container">
+            <div class="section-header reveal">
+                <h2>Simple Licensing</h2>
+                <p>Start with a trial to ensure compatibility with your environment.</p>
+            </div>
+            <div class="pricing-container">
+                <div class="price-card reveal">
+                    <h3>Starter</h3>
+                    <div class="p-price">$0<span> / 48 hrs</span></div>
+                    <ul class="p-features">
+                        <li><svg viewBox="0 0 24 24"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg> Full Software Access</li>
+                        <li><svg viewBox="0 0 24 24"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg> All Activity Loops</li>
+                        <li><svg viewBox="0 0 24 24"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg> Break Logic</li>
+                        <li style="opacity:0.5"><svg viewBox="0 0 24 24" style="fill:#555"><path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg> No Priority Support</li>
+                    </ul>
+                    <a href="#download" class="btn-outline" style="display:block; text-align:center; margin-top:30px;">Download Trial</a>
+                </div>
+                <div class="price-card pro reveal">
+                    <span class="tag">Recommended</span>
+                    <h3>Pro License</h3>
+                    <div class="p-price">$30<span> / month</span></div>
+                    <ul class="p-features">
+                        <li><svg viewBox="0 0 24 24"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg> <strong>Unlimited</strong> Runtime</li>
+                        <li><svg viewBox="0 0 24 24"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg> VPN & VDI Keep-Alive</li>
+                        <li><svg viewBox="0 0 24 24"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg> Instant Key Delivery</li>
+                        <li><svg viewBox="0 0 24 24"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg> Priority Email Support</li>
+                    </ul>
+                    <button id="rzp-button1" class="btn-primary" style="display:block; width:100%; text-align:center; margin-top:30px;">Buy Now</button>
+                    <div class="guarantee"><svg viewBox="0 0 24 24"><path d="M12 1L3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5l-9-3zm-2 16l-4-4 1.41-1.41L10 15.17l6.59-6.59L18 10l-8 8z"/></svg> 7-Day Money-Back Guarantee</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="faq">
+        <div class="container">
+            <div class="section-header reveal"><h2>Frequently Asked Questions</h2></div>
+            <div class="faq-grid">
+                <div class="faq-item reveal"><h4>Does this require Admin Rights?</h4><p>No. AutoFlow Plus runs as a portable standard application. It does not require installation or administrator privileges, making it safe for corporate laptops.</p></div>
+                <div class="faq-item reveal"><h4>Will this keep my VPN active?</h4><p>Yes. By simulating user input, AutoFlow Plus prevents the system from entering "Idle" state, which stops VPNs and remote sessions (Citrix, RDP) from timing out.</p></div>
+                <div class="faq-item reveal"><h4>Does it work with Microsoft Teams/Slack?</h4><p>Yes. The continuous activity input ensures your status remains "Available" or "Active," facilitating better communication availability for your team.</p></div>
+                <div class="faq-item reveal"><h4>Is it secure?</h4><p>AutoFlow Plus operates locally. It does not connect to the internet to transmit data, and the input simulation is confined to the standard Windows API.</p></div>
+            </div>
+        </div>
+    </section>
+
+    <section id="download" style="text-align: center; border-bottom: none; padding-bottom: 150px;">
+        <div class="container reveal">
+            <h2 style="font-size: 36px; margin-bottom: 20px; color: white;">Optimize Your Workflow</h2>
+            <p style="color: var(--text-muted); margin-bottom: 40px;">Join thousands of professionals maintaining system continuity.</p>
+            <a href="AutoFlowPlus.exe" class="btn-primary" style="padding: 18px 40px; font-size: 18px;">Download for Windows</a>
+            <p style="margin-top: 20px; font-size: 13px; color: #444;">Supports Windows 10 & 11 (64-bit)</p>
+            <div class="trust-badges" style="margin-top: 20px; justify-content: center;">
+                <div class="trust-item"><svg viewBox="0 0 24 24"><path d="M12 2L3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5l-9-3zm-2 16l-4-4 1.41-1.41L10 15.17l6.59-6.59L18 10l-8 8z"/></svg> VirusTotal Clean</div>
+                <div class="trust-item"><svg viewBox="0 0 24 24"><path d="M12 2L3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5l-9-3zm-2 16l-4-4 1.41-1.41L10 15.17l6.59-6.59L18 10l-8 8z"/></svg> Signed & Verified</div>
+            </div>
+        </div>
+    </section>
+
+    <footer>
+        <div class="container">
+            <div class="f-links">
+                <a href="#">Terms of Service</a>
+                <a href="#">Privacy Policy</a>
+                <a href="mailto:support@yourdomain.com">Support</a>
+            </div>
+            <p style="margin-top: 20px;">&copy; 2026 AutoFlow Plus.</p>
+        </div>
+    </footer>
+
+    <div class="mobile-sticky-cta">
+        <div style="font-weight:bold; color:white; font-size:16px;">AutoFlow Plus</div>
+        <a href="#pricing" class="btn-sm" style="background:var(--green); color:black; font-weight:700;">Get License</a>
+    </div>
+
+    <script>
+        window.addEventListener('scroll', reveal);
+        function reveal(){
+            var reveals = document.querySelectorAll('.reveal');
+            for(var i = 0; i < reveals.length; i++){
+                var windowheight = window.innerHeight;
+                var revealtop = reveals[i].getBoundingClientRect().top;
+                var revealpoint = 100;
+                if(revealtop < windowheight - revealpoint){
+                    reveals[i].classList.add('active');
+                }
+            }
+        }
+        reveal();
+        function toggleMenu() { document.querySelector('.nav-links').classList.toggle('active'); }
+    </script>
+
+    <script>
+    document.getElementById('rzp-button1').onclick = async function(e){
+        e.preventDefault();
+        
+        const backendOrderUrl = 'http://localhost:3000/create-order'; 
+
+        try {
+            console.log("1. Button clicked. Attempting to fetch order ID...");
+            
+            // Step 1: Ask Backend to create an order
+            const response = await fetch(backendOrderUrl, {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({ amount: 3000, currency: "INR" }) 
+            });
+
+            if (!response.ok) {
+                alert("Error: Could not connect to backend. Check Console.");
+                throw new Error(`Server returned ${response.status} ${response.statusText}`);
+            }
+
+            const orderData = await response.json();
+            console.log("2. Order Created:", orderData);
+
+            // Step 2: Configure Razorpay Options
+            var options = {
+                "key": "rzp_live_S2A32M4urkBliq", //
+                "amount": orderData.amount, 
+                "currency": orderData.currency,
+                "name": "AutoFlow Plus",
+                "description": "Pro License Purchase",
+                "image": "https://autoflowplus.com/logo.png",
+                "order_id": orderData.id, 
+                // [CHANGED] Handler is now 'async' to support awaiting verification
+                "handler": async function (response){
+                    
+                    // Alert the user that payment is done and verification is starting
+                    alert("Payment Successful! Verifying and generating license...");
+
+                    // Step 4: Ask the server to verify signature and give us the key
+                    const result = await fetch('http://localhost:3000/verify-payment', {
+                        method: 'POST',
+                        headers: {'Content-Type': 'application/json'},
+                        body: JSON.stringify({
+                            razorpay_order_id: response.razorpay_order_id,
+                            razorpay_payment_id: response.razorpay_payment_id,
+                            razorpay_signature: response.razorpay_signature
+                        })
+                    });
+
+                    const data = await result.json();
+
+                    // Step 5: Show the License Key
+                    if (data.status === "success") {
+                        alert("Verification Success! \n\nYour License Key is: " + data.license);
+                        console.log("License Key:", data.license);
+                    } else {
+                        alert("Payment Verification Failed. Please contact support.");
+                    }
+                },
+                "prefill": {
+                    "name": "User Name",
+                    "email": "user@example.com",
+                    "contact": "9999999999"
+                },
+                "theme": {
+                    "color": "#3B8ED0"
+                }
+            };
+            
+            // Step 3: Open Razorpay
+            var rzp1 = new Razorpay(options);
+            rzp1.on('payment.failed', function (response){
+                    alert("Payment Failed: " + response.error.description);
+            });
+            rzp1.open();
+
+        } catch (error) {
+            console.error("PAYMENT ERROR:", error);
+            alert("Payment initialization failed. Please check the console for details.");
+        }
+    }
+    </script>
+
+</body>
+</html>
