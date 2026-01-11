@@ -1,66 +1,45 @@
 const express = require('express');
+const cors = require('cors');
 const Razorpay = require('razorpay');
 const crypto = require('crypto');
-const cors = require('cors');
-require('dotenv').config(); // Loads .env file (for local use)
+require('dotenv').config();
+const bodyParser = require('body-parser');
+const nodemailer = require('nodemailer');
+const path = require('path'); // REQUIRED: Allows server to find your HTML files
 
 const app = express();
 
 // Middleware
-app.use(express.json());
 app.use(cors());
+app.use(bodyParser.json());
 
-// --- DEBUGGING & SAFETY CHECK ---
-console.log("-------------------------------------------------");
-console.log("🚀 STARTING SERVER...");
-console.log("🔍 CHECKING ENVIRONMENT VARIABLES:");
-console.log("   > KEY_ID:", process.env.RAZORPAY_KEY_ID ? "✅ Loaded" : "❌ MISSING/UNDEFINED");
-console.log("   > KEY_SECRET:", process.env.RAZORPAY_KEY_SECRET ? "✅ Loaded" : "❌ MISSING/UNDEFINED");
-console.log("-------------------------------------------------");
+// --- CRITICAL CHANGE ---
+// This tells the server to look in the current folder for files like 'style.css' or images
+app.use(express.static(__dirname));
 
-let instance;
-
-// Only initialize Razorpay if keys are present
-if (process.env.RAZORPAY_KEY_ID && process.env.RAZORPAY_KEY_SECRET) {
-    try {
-        instance = new Razorpay({
-            key_id: process.env.RAZORPAY_KEY_ID,
-            key_secret: process.env.RAZORPAY_KEY_SECRET,
-        });
-        console.log("✅ Razorpay Instance Created Successfully.");
-    } catch (error) {
-        console.error("❌ Error creating Razorpay instance:", error.message);
-    }
-} else {
-    console.error("⚠️ CRITICAL WARNING: Razorpay keys are missing! Payment routes will fail.");
-}
-
-// --------------------------------
-// NEW: Default Route (Fixes "Cannot GET /" error)
-// --------------------------------
-app.get('/', (req, res) => {
-    res.send(`
-        <div style="font-family: sans-serif; text-align: center; padding: 50px;">
-            <h1 style="color: #2ecc71;">AutoFlow Server is Running! 🚀</h1>
-            <p>Status: <strong>Online</strong></p>
-            <p>Payment API is ready to accept requests.</p>
-        </div>
-    `);
+// Razorpay Instance
+const razorpay = new Razorpay({
+    key_id: process.env.RAZORPAY_KEY_ID,
+    key_secret: process.env.RAZORPAY_KEY_SECRET
 });
 
-// Route to create an order
-app.post('/order', async (req, res) => {
-    if (!instance) {
-        return res.status(500).json({ error: "Server Error: Payment gateway not configured." });
-    }
+// --- ROUTES ---
 
+// 1. Serve the Homepage
+// When someone visits your main link, show them index.html instead of the text message
+app.get('/', (req, res) => {
+    res.sendFile(path.join(__dirname, 'index.html'));
+});
+
+// 2. Payment Route: Create Order
+app.post('/create-order', async (req, res) => {
     try {
         const options = {
             amount: req.body.amount * 100, // Amount in paise
-            currency: "INR",
-            receipt: "receipt#1",
+            currency: 'INR',
+            receipt: 'receipt_' + Math.random().toString(36).substring(7),
         };
-        const order = await instance.orders.create(options);
+        const order = await razorpay.orders.create(options);
         res.json(order);
     } catch (error) {
         console.error("Order Creation Error:", error);
@@ -68,25 +47,51 @@ app.post('/order', async (req, res) => {
     }
 });
 
-// Route to verify payment signature
-app.post('/verify', (req, res) => {
+// 3. Payment Route: Verify Payment
+app.post('/verify-payment', async (req, res) => {
     const { razorpay_order_id, razorpay_payment_id, razorpay_signature } = req.body;
 
-    const body = razorpay_order_id + "|" + razorpay_payment_id;
-
-    const expectedSignature = crypto
-        .createHmac('sha256', process.env.RAZORPAY_KEY_SECRET)
-        .update(body.toString())
+    const generated_signature = crypto.createHmac('sha256', process.env.RAZORPAY_KEY_SECRET)
+        .update(razorpay_order_id + "|" + razorpay_payment_id)
         .digest('hex');
 
-    if (expectedSignature === razorpay_signature) {
-        res.json({ status: "success" });
+    if (generated_signature === razorpay_signature) {
+        res.json({ success: true, message: "Payment Verified" });
     } else {
-        res.status(400).json({ status: "failure" });
+        res.status(400).json({ success: false, message: "Invalid Signature" });
     }
 });
 
-const PORT = process.env.PORT || 5000;
+// 4. Send License Key Email
+app.post('/send-license', async (req, res) => {
+    const { email, licenseKey } = req.body;
+
+    const transporter = nodemailer.createTransport({
+        service: 'gmail',
+        auth: {
+            user: process.env.EMAIL_USER,
+            pass: process.env.EMAIL_PASS
+        }
+    });
+
+    const mailOptions = {
+        from: process.env.EMAIL_USER,
+        to: email,
+        subject: 'Your AutoFlow License Key',
+        text: `Thank you for your purchase! Here is your license key: ${licenseKey}`
+    };
+
+    try {
+        await transporter.sendMail(mailOptions);
+        res.json({ success: true, message: "License key sent!" });
+    } catch (error) {
+        console.error("Email Error:", error);
+        res.status(500).json({ success: false, error: error.message });
+    }
+});
+
+// Start Server
+const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
     console.log(`Server running on port ${PORT}`);
 });
