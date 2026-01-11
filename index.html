@@ -368,8 +368,8 @@
                     <div class="p-price">$0<span> / 48 hrs</span></div>
                     <ul class="p-features">
                         <li><svg viewBox="0 0 24 24"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg> Full Software Access</li>
-                        <li><svg viewBox="0 0 24 24"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg> All Activity Loops</li>
-                        <li><svg viewBox="0 0 24 24"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg> Break Logic</li>
+                        <li><svg viewBox="0 0 24 24"><path d="M9 16.17L4.83 12l-1.41L9 19 21 7l-1.41-1.41z"/></svg> All Activity Loops</li>
+                        <li><svg viewBox="0 0 24 24"><path d="M9 16.17L4.83 12l-1.41L9 19 21 7l-1.41-1.41z"/></svg> Break Logic</li>
                         <li style="opacity:0.5"><svg viewBox="0 0 24 24" style="fill:#555"><path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg> No Priority Support</li>
                     </ul>
                     <a href="#download" class="btn-outline" style="display:block; text-align:center; margin-top:30px;">Download Trial</a>
@@ -463,13 +463,13 @@
     </script>
 
     <script>
-    // 1. Define Global Variable for Subscription ID
+    // 1. Define Global Variable for Subscription ID to link key to payment in DB
     let currentSubscriptionId = ""; 
 
     document.getElementById('rzp-button1').onclick = async function(e){
         e.preventDefault();
         
-        // 1. Create Subscription (Not Order)
+        // 2. Request Subscription creation from the server
         try {
             console.log("1. Requesting Subscription...");
             const response = await fetch('/create-subscription', {
@@ -486,24 +486,24 @@
             const data = await response.json();
             
             if(!data.id) {
-                alert("Could not create subscription ID.");
+                alert("Could not create subscription ID. Check Render logs for Plan ID mismatch.");
                 return;
             }
 
-            // 2. Open Razorpay for Subscription
+            // 3. Open Razorpay checkout configured for Subscriptions
             var options = {
-                "key": "rzp_live_S2IkZtv1DDkCr5", // Your Live Key ID
-                "subscription_id": data.id, 
+                "key": "rzp_live_S2IkZtv1DDkCr5", // Ensure this is your Live Key ID
+                "subscription_id": data.id, // Mandatory for recurring payments
                 "name": "AutoFlow Plus",
                 "description": "Monthly Professional License",
-                "image": "logo.png", // Ensure this image exists on your server
+                "image": "logo.png", 
                 "handler": async function (response){
                     
-                    // --- CHANGED: Capture the Subscription ID here ---
+                    // Capture the ID locally to send with email later
                     currentSubscriptionId = response.razorpay_subscription_id;
                     console.log("Subscription ID Captured:", currentSubscriptionId);
 
-                    // 3. Verify Payment
+                    // 4. Verify Payment signature on the backend
                     const verifyRes = await fetch('/verify-payment', {
                         method: 'POST',
                         headers: {'Content-Type': 'application/json'},
@@ -517,7 +517,7 @@
                     const verifyData = await verifyRes.json();
 
                     if (verifyData.success) {
-                        // 4. Success: Hide Button, Show Email Form
+                        // Success: Show the form for license delivery
                         document.getElementById('payment-area').style.display = 'none';
                         document.getElementById('email-section').style.display = 'block';
                     } else {
@@ -542,11 +542,11 @@
 
         } catch (error) {
             console.error("PAYMENT ERROR:", error);
-            alert("Payment initialization failed. Is the server waking up? Try again in 10 seconds.");
+            alert("Connection error. Ensure your server is active.");
         }
     }
 
-    // Function to send the license key email
+    // Function to generate key, save to MongoDB, and send via Zoho.in
     async function sendLicense() {
         const email = document.getElementById('userEmail').value;
         const btn = document.querySelector('.btn-success');
@@ -555,14 +555,14 @@
 
         btn.innerText = "Sending...";
         
-        // Generate a random license key for demo purposes (or fetch from DB)
+        // Generate a random key; server will save it to database
         const licenseKey = 'LICENSE-' + Math.random().toString(36).substr(2, 9).toUpperCase();
 
         try {
             const res = await fetch('/send-license', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                // --- CHANGED: Now sending subscriptionId as well ---
+                // Sending subscriptionId to link records
                 body: JSON.stringify({ 
                     email: email, 
                     licenseKey: licenseKey,
@@ -575,7 +575,7 @@
                 alert("License key sent to " + email);
                 btn.innerText = "Sent!";
             } else {
-                alert("Failed to send email.");
+                alert("Failed to send email. Check Zoho SMTP settings.");
                 btn.innerText = "Retry";
             }
         } catch (err) {
