@@ -130,7 +130,6 @@
         .trust-badges { display: flex; justify-content: center; gap: 20px; opacity: 0.7; margin-bottom: 60px; }
         .trust-item { display: flex; align-items: center; gap: 8px; font-size: 13px; color: var(--green); font-weight: 500; }
         .trust-item svg { width: 16px; fill: currentColor; }
-        .logos { display: flex; gap: 40px; justify-content: center; flex-wrap: wrap; opacity: 0.6; margin-top: 40px; font-size: 13px; font-weight: 600; color: #555; text-transform: uppercase; letter-spacing: 1px; }
         
         section { padding: 100px 0; border-bottom: 1px solid var(--border); }
         .section-header { text-align: center; margin-bottom: 70px; }
@@ -154,7 +153,7 @@
         .guide-text svg { width: 18px; fill: var(--green); }
         .guide-visual { flex: 1; display: flex; align-items: center; justify-content: center; }
 
-        /* --- PRICING & FAQ --- */
+        /* --- PRICING --- */
         .pricing-container { display: flex; justify-content: center; gap: 30px; flex-wrap: wrap; max-width: 900px; margin: 0 auto; }
         .price-card { flex: 1; min-width: 300px; background: var(--bg-card); border: 1px solid var(--border); padding: 40px; border-radius: 16px; position: relative; }
         .price-card.pro { border: 1px solid var(--accent); background: radial-gradient(circle at top right, var(--accent-glow), var(--bg-card)); }
@@ -162,23 +161,8 @@
         .p-price { font-size: 42px; font-weight: 800; margin: 20px 0; color: white; }
         .p-features li { margin-bottom: 12px; color: var(--text-muted); font-size: 14px; display: flex; align-items: center; gap: 10px; }
         .p-features svg { width: 16px; fill: var(--green); }
-        .guarantee { display: flex; align-items: center; justify-content: center; gap: 8px; margin-top: 15px; font-size: 12px; color: var(--text-muted); }
-        .guarantee svg { width: 14px; fill: var(--accent); }
 
-        .faq-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 40px; }
-        .faq-item h4 { color: white; font-size: 18px; margin-bottom: 10px; }
-        .faq-item p { color: var(--text-muted); font-size: 15px; }
-
-        .stars { color: #FFD700; margin-bottom: 15px; font-size: 18px; }
-        .review-text { font-style: italic; color: var(--text-muted); margin-bottom: 20px; }
-        .reviewer { color: white; font-weight: 600; font-size: 14px; }
-
-        footer { border-top: 1px solid var(--border); padding: 60px 0; text-align: center; color: #555; font-size: 13px; }
-        .f-links a { color: #555; margin: 0 15px; text-decoration: none; }
-
-        .mobile-sticky-cta { position: fixed; bottom: 0; left: 0; width: 100%; background: #111; border-top: 1px solid #333; padding: 15px 20px; display: none; justify-content: space-between; align-items: center; z-index: 9999; box-shadow: 0 -10px 20px rgba(0,0,0,0.5); }
-
-        /* New Styles for Email Input */
+        /* --- EMAIL BOX --- */
         .email-box {
             display: none;
             margin-top: 20px;
@@ -209,21 +193,23 @@
             to { opacity: 1; transform: translateY(0); }
         }
 
+        .faq-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 40px; }
+        .faq-item h4 { color: white; font-size: 18px; margin-bottom: 10px; }
+        .faq-item p { color: var(--text-muted); font-size: 15px; }
+
+        footer { border-top: 1px solid var(--border); padding: 60px 0; text-align: center; color: #555; font-size: 13px; }
+
         @media (max-width: 768px) {
             h1 { font-size: 42px; }
             .mobile-menu-btn { display: block; }
             .nav-links { position: fixed; top: 60px; left: 0; width: 100%; background: #0f0f0f; flex-direction: column; padding: 40px; display: none; border-bottom: 1px solid #333; }
             .nav-links.active { display: flex; }
-            .faq-grid { grid-template-columns: 1fr; }
             .guide-block, .guide-block:nth-child(even) { flex-direction: column; }
-            .mobile-sticky-cta { display: flex; }
-            footer { padding-bottom: 100px; }
         }
     </style>
 </head>
 <body>
 
-    <div class="bg-mesh"></div>
     <div class="hero-bg"></div>
 
     <nav>
@@ -337,7 +323,7 @@
                         <p style="color: var(--green); margin-bottom: 10px; font-weight: 600;">Payment Successful!</p>
                         <p style="color: var(--text-muted); font-size: 13px; margin-bottom: 10px;">Enter your email to receive your license key:</p>
                         <input type="email" id="userEmail" class="email-input" placeholder="name@company.com">
-                        <button class="btn-success" onclick="sendLicense()">Send License Key</button>
+                        <button class="btn-success" id="sendBtn" onclick="sendLicense()">Send License Key</button>
                     </div>
                 </div>
             </div>
@@ -354,16 +340,9 @@
         </div>
     </section>
 
-    <section id="download" style="text-align: center; border-bottom: none; padding-bottom: 150px;">
-        <div class="container reveal">
-            <h2 style="font-size: 36px; margin-bottom: 20px; color: white;">Optimize Your Workflow</h2>
-            <a href="AutoFlowPlus.exe" class="btn-primary" style="padding: 18px 40px; font-size: 18px;">Download for Windows</a>
-        </div>
-    </section>
-
     <footer>
         <div class="container">
-            <p style="margin-top: 20px;">&copy; 2026 AutoFlow Plus.</p>
+            <p>&copy; 2026 AutoFlow Plus.</p>
         </div>
     </footer>
 
@@ -374,8 +353,7 @@
             for(var i = 0; i < reveals.length; i++){
                 var windowheight = window.innerHeight;
                 var revealtop = reveals[i].getBoundingClientRect().top;
-                var revealpoint = 100;
-                if(revealtop < windowheight - revealpoint){
+                if(revealtop < windowheight - 100){
                     reveals[i].classList.add('active');
                 }
             }
@@ -389,38 +367,33 @@
 
     document.getElementById('rzp-button1').onclick = async function(e){
         e.preventDefault();
+        const btn = e.target;
+        btn.innerText = "Connecting...";
         
         try {
-            // Fetch dynamic Key ID and Create Subscription
+            // Corrected Fetch Routes
             const keyRes = await fetch('/get-razorpay-key');
             const keyData = await keyRes.json();
 
-            const response = await fetch('/create-subscription', {
+            const subRes = await fetch('/create-subscription', {
                 method: 'POST',
                 headers: {'Content-Type': 'application/json'}
             });
 
-            if (!response.ok) throw new Error("Server connection error.");
-
-            const data = await response.json();
-            if(!data.id) throw new Error("Invalid Plan ID.");
+            if (!subRes.ok) throw new Error("Subscription failed");
+            const subData = await subRes.json();
 
             var options = {
                 "key": keyData.key, 
-                "subscription_id": data.id, 
+                "subscription_id": subData.id, 
                 "name": "AutoFlow Plus",
-                "description": "Monthly Professional License",
                 "handler": async function (response){
                     currentSubscriptionId = response.razorpay_subscription_id;
 
                     const verifyRes = await fetch('/verify-payment', {
                         method: 'POST',
                         headers: {'Content-Type': 'application/json'},
-                        body: JSON.stringify({
-                            razorpay_payment_id: response.razorpay_payment_id,
-                            razorpay_subscription_id: response.razorpay_subscription_id,
-                            razorpay_signature: response.razorpay_signature
-                        })
+                        body: JSON.stringify(response)
                     });
 
                     const verifyData = await verifyRes.json();
@@ -432,20 +405,22 @@
                 "theme": { "color": "#3B8ED0" }
             };
             
-            var rzp1 = new Razorpay(options);
-            rzp1.open();
+            new Razorpay(options).open();
 
         } catch (error) {
             alert("Connection error. Ensure your server is active.");
+        } finally {
+            btn.innerText = "Subscribe Now";
         }
     }
 
     async function sendLicense() {
         const email = document.getElementById('userEmail').value;
-        const btn = document.querySelector('.btn-success');
+        const btn = document.getElementById('sendBtn');
         
-        if (!email) { alert("Please enter a valid email."); return; }
+        if (!email) { alert("Please enter email."); return; }
         btn.innerText = "Sending...";
+        btn.disabled = true;
         
         const licenseKey = 'LICENSE-' + Math.random().toString(36).substr(2, 9).toUpperCase();
 
@@ -462,15 +437,17 @@
             
             const data = await res.json();
             if (data.success) {
-                alert("License key sent to " + email);
+                alert("Key sent to " + email);
                 btn.innerText = "Sent!";
             } else {
-                alert("Failed to send email. Check Zoho SMTP settings.");
+                alert("Error: " + data.error);
                 btn.innerText = "Retry";
+                btn.disabled = false;
             }
         } catch (err) {
-            alert("Error sending email.");
+            alert("Server connection failed.");
             btn.innerText = "Retry";
+            btn.disabled = false;
         }
     }
     </script>

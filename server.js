@@ -10,56 +10,51 @@ const path = require('path');
 
 const app = express();
 
-// Middleware
 app.use(cors());
 app.use(bodyParser.json());
 app.use(express.static(__dirname));
 
-// --- DATABASE CONNECTION ---
 mongoose.connect(process.env.MONGO_URI)
     .then(() => console.log('Connected to MongoDB Database'))
     .catch(err => console.error('Database Connection Error:', err));
 
-const LicenseSchema = new mongoose.Schema({
+const License = mongoose.model('License', new mongoose.Schema({
     email: String,
     licenseKey: String,
     subscriptionId: String,
     status: { type: String, default: 'active' },
     createdAt: { type: Date, default: Date.now }
-});
-
-const License = mongoose.model('License', LicenseSchema);
+}));
 
 const razorpay = new Razorpay({
     key_id: process.env.RAZORPAY_KEY_ID,
     key_secret: process.env.RAZORPAY_KEY_SECRET
 });
 
-// 1. Serve Homepage
 app.get('/', (req, res) => {
     res.sendFile(path.join(__dirname, 'index.html'));
 });
 
-// 2. Create Subscription (LIVE MODE)
+// Added this route to fix the "Server Connection Error" in your index.html
+app.get('/get-razorpay-key', (req, res) => {
+    res.json({ key: process.env.RAZORPAY_KEY_ID });
+});
+
 app.post('/create-subscription', async (req, res) => {
     try {
-        console.log("Attempting to create subscription...");
         const subscription = await razorpay.subscriptions.create({
-            // REPLACE THIS with your actual Plan ID from Razorpay LIVE Dashboard
-            plan_id: 'plan_YOUR_ACTUAL_LIVE_PLAN_ID', 
+            plan_id: 'plan_S26jZw0nJKA5uA', // Ensure this is your LIVE Plan ID
             customer_notify: 1,
             total_count: 120, 
             quantity: 1,
         });
-        console.log("Subscription Created Successfully:", subscription.id);
         res.json(subscription);
     } catch (error) {
-        console.error("RAZORPAY API ERROR:", JSON.stringify(error, null, 2));
-        res.status(500).json({ error: "Razorpay rejection", details: error });
+        console.error("RAZORPAY ERROR:", error);
+        res.status(500).json(error);
     }
 });
 
-// 3. Verify Payment
 app.post('/verify-payment', async (req, res) => {
     const { razorpay_payment_id, razorpay_subscription_id, razorpay_signature } = req.body;
     const data = razorpay_payment_id + "|" + razorpay_subscription_id;
@@ -74,60 +69,34 @@ app.post('/verify-payment', async (req, res) => {
     }
 });
 
-// 4. Send & Save License (Updated for Zoho.in with Detailed Logging)
 app.post('/send-license', async (req, res) => {
     const { email, licenseKey, subscriptionId } = req.body;
-    console.log(`Attempting to save and send key to: ${email}`);
-
     try {
-        // Save to MongoDB
         await new License({ email, licenseKey, subscriptionId }).save();
-        console.log("License saved to MongoDB successfully.");
         
         const transporter = nodemailer.createTransport({
-            host: 'smtppro.zoho.in', // Ensure this is .com if your account is not .in
+            host: 'smtppro.zoho.in', // Change to .com if necessary
             port: 465,
             secure: true, 
             auth: {
                 user: process.env.EMAIL_USER,
-                pass: process.env.EMAIL_PASS // MUST be the 16-character App Password
+                pass: process.env.EMAIL_PASS // Your 12-character App Password
             }
         });
 
-        console.log("Attempting to send email via Zoho...");
         await transporter.sendMail({
             from: process.env.EMAIL_USER,
             to: email,
             subject: 'Your AutoFlow Plus License Key',
-            text: `Thank you for your purchase!\n\nYour License Key: ${licenseKey}\n\nPlease keep this email for your records.`
+            text: `License Key: ${licenseKey}`
         });
 
-        console.log("Email sent successfully!");
         res.json({ success: true });
     } catch (error) {
-        console.error("CRITICAL ERROR IN SEND-LICENSE ROUTE:");
-        console.error(error); 
+        console.error("EMAIL ERROR:", error);
         res.status(500).json({ success: false, error: error.message });
     }
 });
 
-// 5. Validate License (For Desktop App Check)
-app.post('/validate-license', async (req, res) => {
-    const { licenseKey } = req.body;
-    try {
-        const userRecord = await License.findOne({ licenseKey: licenseKey });
-        if (!userRecord) {
-            return res.json({ valid: false, message: "Key not found" });
-        }
-        if (userRecord.status === 'active') {
-            res.json({ valid: true });
-        } else {
-            res.json({ valid: false, message: "Subscription Cancelled" });
-        }
-    } catch (error) {
-        res.status(500).json({ valid: false, error: error.message });
-    }
-});
-
-const PORT = process.env.PORT || 3000;
+const PORT = process.env.PORT || 10000;
 app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
