@@ -44,7 +44,7 @@ app.get('/', (req, res) => {
 app.post('/create-subscription', async (req, res) => {
     try {
         const subscription = await razorpay.subscriptions.create({
-            plan_id: 'plan_YOUR_LIVE_PLAN_ID', // <--- MUST BE YOUR LIVE PLAN ID
+            plan_id: 'plan_S26uwgKUPt1CFq', // <--- MUST BE YOUR LIVE PLAN ID
             customer_notify: 1,
             total_count: 120, 
             quantity: 1,
