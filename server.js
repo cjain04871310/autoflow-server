@@ -5,8 +5,7 @@ const crypto = require('crypto');
 const mongoose = require('mongoose');
 require('dotenv').config();
 const bodyParser = require('body-parser');
-const nodemailer = require('nodemailer');
-const path = require('path');
+const path = require('path'); // Removed nodemailer
 
 const app = express();
 
@@ -68,31 +67,16 @@ app.post('/verify-payment', async (req, res) => {
     }
 });
 
-app.post('/send-license', async (req, res) => {
+// NEW: Simplified route that only saves the license record to your database
+app.post('/save-license', async (req, res) => {
     const { email, licenseKey, subscriptionId } = req.body;
     try {
         await new License({ email, licenseKey, subscriptionId }).save();
-        
-        // --- UPDATED FOR GMAIL ---
-        const transporter = nodemailer.createTransport({
-            service: 'gmail', // Uses Gmail's built-in settings
-            auth: {
-                user: process.env.EMAIL_USER, // Your Gmail address (update in Render Env)
-                pass: process.env.EMAIL_PASS  // Your 16-character Google App Password
-            }
-        });
-
-        await transporter.sendMail({
-            from: process.env.EMAIL_USER,
-            to: email,
-            subject: 'Your AutoFlow Plus License Key',
-            text: `Thank you for your purchase!\n\nYour License Key: ${licenseKey}\n\nPlease keep this email for your records.`
-        });
-
+        console.log(`License record saved for ${email}`);
         res.json({ success: true });
     } catch (error) {
-        console.error("EMAIL ERROR:", error);
-        res.status(500).json({ success: false, error: error.message });
+        console.error("DATABASE ERROR:", error);
+        res.status(500).json({ success: false });
     }
 });
 
