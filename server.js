@@ -2,7 +2,7 @@ const express = require('express');
 const cors = require('cors');
 const Razorpay = require('razorpay');
 const crypto = require('crypto');
-const mongoose = require('mongoose'); // Database tool
+const mongoose = require('mongoose'); 
 require('dotenv').config();
 const bodyParser = require('body-parser');
 const nodemailer = require('nodemailer');
@@ -16,18 +16,16 @@ app.use(bodyParser.json());
 app.use(express.static(__dirname));
 
 // --- DATABASE CONNECTION ---
-// Connect to MongoDB using the link you added in Render
 mongoose.connect(process.env.MONGO_URI)
     .then(() => console.log('Connected to MongoDB Database'))
     .catch(err => console.error('Database Connection Error:', err));
 
-// Define what a "License" looks like in the database
 const LicenseSchema = new mongoose.Schema({
     email: String,
     licenseKey: String,
     subscriptionId: String,
     planId: String,
-    status: { type: String, default: 'active' }, // active, cancelled, expired
+    status: { type: String, default: 'active' }, 
     createdAt: { type: Date, default: Date.now }
 });
 
@@ -41,7 +39,6 @@ const razorpay = new Razorpay({
 
 // --- ROUTES ---
 
-// 1. Serve Homepage
 app.get('/', (req, res) => {
     res.sendFile(path.join(__dirname, 'index.html'));
 });
@@ -50,7 +47,7 @@ app.get('/', (req, res) => {
 app.post('/create-subscription', async (req, res) => {
     try {
         const subscription = await razorpay.subscriptions.create({
-            plan_id: 'plan_S26jZw0nJKA5uA', // <--- PASTE YOUR PLAN ID HERE
+            plan_id: 'plan_S26jZw0nJKA5uA', // Make sure this is your TEST Plan ID from Razorpay Dashboard
             customer_notify: 1,
             total_count: 120, 
             quantity: 1,
@@ -58,57 +55,52 @@ app.post('/create-subscription', async (req, res) => {
         res.json(subscription);
     } catch (error) {
         console.error("Subscription Creation Error:", error);
-        res.status(500).send(error);
+        res.status(500).json(error);
     }
 });
 
-// 3. Verify Payment AND Save License to Database
 app.post('/verify-payment', async (req, res) => {
     const { razorpay_payment_id, razorpay_subscription_id, razorpay_signature } = req.body;
-
     const data = razorpay_payment_id + "|" + razorpay_subscription_id;
-
     const generated_signature = crypto.createHmac('sha256', process.env.RAZORPAY_KEY_SECRET)
         .update(data)
         .digest('hex');
 
     if (generated_signature === razorpay_signature) {
-        // Payment is Real! We don't save the user yet, we wait for the /send-license call
-        // OR we can just return success here.
         res.json({ success: true, message: "Subscription Verified" });
     } else {
         res.status(400).json({ success: false, message: "Invalid Signature" });
     }
 });
 
-// 4. Send License Key & SAVE to Database
+// 4. Send License Key & SAVE to Database (UPDATED FOR ZOHO)
 app.post('/send-license', async (req, res) => {
     const { email, licenseKey, subscriptionId } = req.body; 
-    // Note: You must update index.html to send 'subscriptionId' too!
 
-    // A. Save to Database
     try {
         const newLicense = new License({
             email: email,
             licenseKey: licenseKey,
-            subscriptionId: subscriptionId || 'manual_entry', // handle missing sub ID
+            subscriptionId: subscriptionId || 'manual_entry',
             status: 'active'
         });
         await newLicense.save();
         console.log("License Saved to Database:", licenseKey);
     } catch (dbError) {
         console.error("Database Save Error:", dbError);
-        // We continue sending email even if DB fails, to be safe for the user
     }
 
-    // B. Send Email
+    // --- ZOHO CONFIGURATION START ---
     const transporter = nodemailer.createTransport({
-        service: 'gmail',
+        host: 'smtppro.zoho.in', // Change to 'smtppro.zoho.com' if your account is not .in
+        port: 465,
+        secure: true, // Use SSL for port 465
         auth: {
             user: process.env.EMAIL_USER,
             pass: process.env.EMAIL_PASS
         }
     });
+    // --- ZOHO CONFIGURATION END ---
 
     const mailOptions = {
         from: process.env.EMAIL_USER,
@@ -126,30 +118,18 @@ app.post('/send-license', async (req, res) => {
     }
 });
 
-// 5. NEW ROUTE: Validate License (For your Desktop App to check)
 app.post('/validate-license', async (req, res) => {
     const { licenseKey } = req.body;
-
     try {
-        // 1. Find the license in our DB
         const userRecord = await License.findOne({ licenseKey: licenseKey });
-
         if (!userRecord) {
             return res.json({ valid: false, message: "Key not found" });
         }
-
-        // 2. (Optional) Check Razorpay to see if they are still paying
-        // For now, let's just check if we marked them as active
         if (userRecord.status === 'active') {
-             // 3. OPTIONAL: Check Real-time status with Razorpay
-             // const subStatus = await razorpay.subscriptions.fetch(userRecord.subscriptionId);
-             // if(subStatus.status !== 'active') { update DB to cancelled; return false; }
-
             res.json({ valid: true });
         } else {
             res.json({ valid: false, message: "Subscription Cancelled" });
         }
-
     } catch (error) {
         res.status(500).json({ valid: false, error: error.message });
     }
