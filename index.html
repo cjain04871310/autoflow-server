@@ -466,7 +466,7 @@
             const response = await fetch(backendOrderUrl, {
                 method: 'POST',
                 headers: {'Content-Type': 'application/json'},
-                body: JSON.stringify({ amount: 3000, currency: "INR" }) 
+                body: JSON.stringify({ amount: 1, currency: "INR" }) 
             });
 
             if (!response.ok) {
