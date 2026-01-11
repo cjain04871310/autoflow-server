@@ -75,7 +75,7 @@ app.post('/send-license', async (req, res) => {
         await new License({ email, licenseKey, subscriptionId }).save();
         
         const transporter = nodemailer.createTransport({
-            host: 'smtppro.zoho.com', // Change to .com if necessary
+            host: 'smtppro.zoho.in', // Change to .com if necessary
             port: 465,
             secure: true, 
             auth: {
@@ -101,4 +101,5 @@ app.post('/send-license', async (req, res) => {
 const PORT = process.env.PORT || 10000;
 
 app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
+
 
