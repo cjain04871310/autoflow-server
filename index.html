@@ -463,6 +463,9 @@
     </script>
 
     <script>
+    // 1. Define Global Variable for Subscription ID
+    let currentSubscriptionId = ""; 
+
     document.getElementById('rzp-button1').onclick = async function(e){
         e.preventDefault();
         
@@ -496,6 +499,10 @@
                 "image": "logo.png", // Ensure this image exists on your server
                 "handler": async function (response){
                     
+                    // --- CHANGED: Capture the Subscription ID here ---
+                    currentSubscriptionId = response.razorpay_subscription_id;
+                    console.log("Subscription ID Captured:", currentSubscriptionId);
+
                     // 3. Verify Payment
                     const verifyRes = await fetch('/verify-payment', {
                         method: 'POST',
@@ -555,7 +562,12 @@
             const res = await fetch('/send-license', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ email, licenseKey })
+                // --- CHANGED: Now sending subscriptionId as well ---
+                body: JSON.stringify({ 
+                    email: email, 
+                    licenseKey: licenseKey,
+                    subscriptionId: currentSubscriptionId 
+                })
             });
             
             const data = await res.json();
