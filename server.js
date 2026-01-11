@@ -5,17 +5,14 @@ const crypto = require('crypto');
 require('dotenv').config();
 const bodyParser = require('body-parser');
 const nodemailer = require('nodemailer');
-const path = require('path'); // REQUIRED: Allows server to find your HTML files
+const path = require('path');
 
 const app = express();
 
 // Middleware
 app.use(cors());
 app.use(bodyParser.json());
-
-// --- CRITICAL CHANGE ---
-// This tells the server to look in the current folder for files like 'style.css' or images
-app.use(express.static(__dirname));
+app.use(express.static(__dirname)); // Serves your HTML/CSS files
 
 // Razorpay Instance
 const razorpay = new Razorpay({
@@ -25,44 +22,49 @@ const razorpay = new Razorpay({
 
 // --- ROUTES ---
 
-// 1. Serve the Homepage
-// When someone visits your main link, show them index.html instead of the text message
+// 1. Serve Homepage
 app.get('/', (req, res) => {
     res.sendFile(path.join(__dirname, 'index.html'));
 });
 
-// 2. Payment Route: Create Order
-app.post('/create-order', async (req, res) => {
+// 2. NEW: Create Subscription (Replaces /create-order)
+app.post('/create-subscription', async (req, res) => {
     try {
-        const options = {
-            amount: req.body.amount * 100, // Amount in paise
-            currency: 'INR',
-            receipt: 'receipt_' + Math.random().toString(36).substring(7),
-        };
-        const order = await razorpay.orders.create(options);
-        res.json(order);
+        const subscription = await razorpay.subscriptions.create({
+            plan_id: 'plan_S26uwgKUPt1CFq', // <--- PASTE YOUR PLAN ID HERE
+            customer_notify: 1,
+            total_count: 120, // 10 years of monthly billing
+            quantity: 1,
+            // add_ons: [],
+            // notes: {}
+        });
+        res.json(subscription);
     } catch (error) {
-        console.error("Order Creation Error:", error);
+        console.error("Subscription Creation Error:", error);
         res.status(500).send(error);
     }
 });
 
-// 3. Payment Route: Verify Payment
+// 3. UPDATED: Verify Subscription Payment
 app.post('/verify-payment', async (req, res) => {
-    const { razorpay_order_id, razorpay_payment_id, razorpay_signature } = req.body;
+    const { razorpay_payment_id, razorpay_subscription_id, razorpay_signature } = req.body;
+
+    // The signature formula for subscriptions is different:
+    // payment_id + "|" + subscription_id
+    const data = razorpay_payment_id + "|" + razorpay_subscription_id;
 
     const generated_signature = crypto.createHmac('sha256', process.env.RAZORPAY_KEY_SECRET)
-        .update(razorpay_order_id + "|" + razorpay_payment_id)
+        .update(data)
         .digest('hex');
 
     if (generated_signature === razorpay_signature) {
-        res.json({ success: true, message: "Payment Verified" });
+        res.json({ success: true, message: "Subscription Verified" });
     } else {
         res.status(400).json({ success: false, message: "Invalid Signature" });
     }
 });
 
-// 4. Send License Key Email
+// 4. Send License Key Email (Unchanged)
 app.post('/send-license', async (req, res) => {
     const { email, licenseKey } = req.body;
 
@@ -78,7 +80,7 @@ app.post('/send-license', async (req, res) => {
         from: process.env.EMAIL_USER,
         to: email,
         subject: 'Your AutoFlow License Key',
-        text: `Thank you for your purchase! Here is your license key: ${licenseKey}`
+        text: `Thank you for subscribing! Here is your license key: ${licenseKey}`
     };
 
     try {
