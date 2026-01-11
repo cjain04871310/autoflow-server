@@ -35,7 +35,6 @@ app.get('/', (req, res) => {
     res.sendFile(path.join(__dirname, 'index.html'));
 });
 
-// Added this route to fix the "Server Connection Error" in your index.html
 app.get('/get-razorpay-key', (req, res) => {
     res.json({ key: process.env.RAZORPAY_KEY_ID });
 });
@@ -43,7 +42,7 @@ app.get('/get-razorpay-key', (req, res) => {
 app.post('/create-subscription', async (req, res) => {
     try {
         const subscription = await razorpay.subscriptions.create({
-            plan_id: 'plan_S26jZw0nJKA5uA', // Ensure this is your LIVE Plan ID
+            plan_id: 'plan_S26jZw0nJKA5uA', 
             customer_notify: 1,
             total_count: 120, 
             quantity: 1,
@@ -74,13 +73,12 @@ app.post('/send-license', async (req, res) => {
     try {
         await new License({ email, licenseKey, subscriptionId }).save();
         
+        // --- UPDATED FOR GMAIL ---
         const transporter = nodemailer.createTransport({
-            host: 'smtppro.zoho.in', // Change to .com if necessary
-            port: 465,
-            secure: true, 
+            service: 'gmail', // Uses Gmail's built-in settings
             auth: {
-                user: process.env.EMAIL_USER,
-                pass: process.env.EMAIL_PASS // Your 12-character App Password
+                user: process.env.EMAIL_USER, // Your Gmail address (update in Render Env)
+                pass: process.env.EMAIL_PASS  // Your 16-character Google App Password
             }
         });
 
@@ -88,7 +86,7 @@ app.post('/send-license', async (req, res) => {
             from: process.env.EMAIL_USER,
             to: email,
             subject: 'Your AutoFlow Plus License Key',
-            text: `License Key: ${licenseKey}`
+            text: `Thank you for your purchase!\n\nYour License Key: ${licenseKey}\n\nPlease keep this email for your records.`
         });
 
         res.json({ success: true });
@@ -99,7 +97,4 @@ app.post('/send-license', async (req, res) => {
 });
 
 const PORT = process.env.PORT || 10000;
-
 app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
-
-
