@@ -34,7 +34,19 @@ if (process.env.RAZORPAY_KEY_ID && process.env.RAZORPAY_KEY_SECRET) {
 } else {
     console.error("⚠️ CRITICAL WARNING: Razorpay keys are missing! Payment routes will fail.");
 }
+
 // --------------------------------
+// NEW: Default Route (Fixes "Cannot GET /" error)
+// --------------------------------
+app.get('/', (req, res) => {
+    res.send(`
+        <div style="font-family: sans-serif; text-align: center; padding: 50px;">
+            <h1 style="color: #2ecc71;">AutoFlow Server is Running! 🚀</h1>
+            <p>Status: <strong>Online</strong></p>
+            <p>Payment API is ready to accept requests.</p>
+        </div>
+    `);
+});
 
 // Route to create an order
 app.post('/order', async (req, res) => {
@@ -63,7 +75,7 @@ app.post('/verify', (req, res) => {
     const body = razorpay_order_id + "|" + razorpay_payment_id;
 
     const expectedSignature = crypto
-        .createHmac('sha256', process.env.RAZORPAY_KEY_SECRET) // Use env var here too
+        .createHmac('sha256', process.env.RAZORPAY_KEY_SECRET)
         .update(body.toString())
         .digest('hex');
 
