@@ -154,16 +154,6 @@
         .guide-text svg { width: 18px; fill: var(--green); }
         .guide-visual { flex: 1; display: flex; align-items: center; justify-content: center; }
 
-        /* --- BLOG SECTION (NEW) --- */
-        .blog-card { display: flex; flex-direction: column; height: 100%; }
-        .blog-img { width: 100%; height: 200px; object-fit: cover; border-radius: 8px; margin-bottom: 20px; opacity: 0.8; transition: 0.3s; }
-        .blog-card:hover .blog-img { opacity: 1; }
-        .blog-meta { font-size: 12px; color: var(--accent); margin-bottom: 10px; font-weight: 600; }
-        .blog-title { font-size: 20px; color: white; margin-bottom: 10px; font-weight: 700; line-height: 1.4; }
-        .blog-excerpt { font-size: 14px; color: var(--text-muted); margin-bottom: 20px; flex-grow: 1; }
-        .read-more { color: white; font-size: 13px; font-weight: 600; text-decoration: none; display: flex; align-items: center; gap: 5px; }
-        .read-more:hover { color: var(--accent); }
-
         /* --- PRICING & FAQ --- */
         .pricing-container { display: flex; justify-content: center; gap: 30px; flex-wrap: wrap; max-width: 900px; margin: 0 auto; }
         .price-card { flex: 1; min-width: 300px; background: var(--bg-card); border: 1px solid var(--border); padding: 40px; border-radius: 16px; position: relative; }
@@ -190,7 +180,7 @@
 
         /* New Styles for Email Input */
         .email-box {
-            display: none; /* Hidden by default */
+            display: none;
             margin-top: 20px;
             animation: fadeIn 0.5s ease-in-out;
         }
@@ -244,7 +234,6 @@
                 <a href="#features">Features</a>
                 <a href="#guide">How It Works</a>
                 <a href="#pricing">Pricing</a>
-                <a href="#blog">Resources</a>
                 <a href="#faq">FAQ</a>
                 <a href="#download" class="btn-sm">Download</a>
             </div>
@@ -254,7 +243,7 @@
     <header class="container" id="home">
         <div class="hero-badge reveal">Updated for 2026</div>
         <h1 class="reveal">Maintain Your <br><span class="text-gradient">Digital Continuity.</span></h1>
-        <p class="subtitle reveal">The professional tool for System Availability. Prevent idle timeouts, maintain VPN connections, and manage remote sessions with intelligent activity simulation.</p>
+        <p class="subtitle reveal">The professional tool for System Availability. Prevent idle timeouts, maintain VPN connections, and ensure remote workspace availability without admin rights.</p>
         
         <div class="cta-box reveal">
             <a href="#pricing" class="btn-primary">Get License - $30</a>
@@ -264,10 +253,6 @@
         <div class="trust-badges reveal">
             <div class="trust-item"><svg viewBox="0 0 24 24"><path d="M12 2L3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5l-9-3zm-2 16l-4-4 1.41-1.41L10 15.17l6.59-6.59L18 10l-8 8z"/></svg> VirusTotal Clean</div>
             <div class="trust-item"><svg viewBox="0 0 24 24"><path d="M12 2L3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5l-9-3zm-2 16l-4-4 1.41-1.41L10 15.17l6.59-6.59L18 10l-8 8z"/></svg> Digitally Signed</div>
-        </div>
-
-        <div class="logos reveal">
-            <span>Microsoft Teams</span> • <span>Cisco AnyConnect</span> • <span>AWS Workspaces</span> • <span>Citrix</span> • <span>Slack</span>
         </div>
     </header>
 
@@ -294,9 +279,6 @@
                     <p>Your license is hardware-locked for security. The software runs locally with no cloud dependencies, ensuring data privacy.</p>
                 </div>
             </div>
-            <div class="reveal" style="display:flex; justify-content:center;">
-                <img src="Jiggler.png" alt="Graph comparing interrupted vs continuous workflow pattern" width="800" height="400" loading="lazy" class="comparison-img">
-            </div>
         </div>
     </section>
 
@@ -316,42 +298,8 @@
                     </ul>
                 </div>
                 <div class="guide-visual">
-                    <img src="dashboard_ui.png" alt="AutoFlow Plus Dashboard Interface with Safe Zone and Activity Metrics" width="600" height="400" loading="lazy" class="ui-mockup-img">
+                    <img src="dashboard_ui.png" alt="AutoFlow Plus Dashboard Interface" width="600" height="400" loading="lazy" class="ui-mockup-img">
                 </div>
-            </div>
-            <div class="guide-block reveal">
-                <div class="guide-text">
-                    <h3>2. Productivity Metrics</h3>
-                    <p>Track your system uptime and activity levels. Useful for freelancers and contractors billing by the hour who need to verify active system time.</p>
-                    <ul>
-                        <li><svg viewBox="0 0 24 24"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg> <strong>Time Tracking:</strong> Monitor active session duration in real-time.</li>
-                        <li><svg viewBox="0 0 24 24"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg> <strong>Activity Logs:</strong> Visualize input density over time to ensure compliance.</li>
-                    </ul>
-                </div>
-            </div>
-            <div class="reveal">
-                <table class="comparison-table">
-                    <thead>
-                        <tr><th>Comparison</th><th>Sleep Blockers</th><th>Basic Scripts</th><th class="best-header best-col">AutoFlow Plus</th></tr>
-                    </thead>
-                    <tbody>
-                        <tr><td>Prevents Sleep Mode</td><td>Constant On</td><td>Static</td><td class="best-col"><span class="check">✔</span> Dynamic Input</td></tr>
-                        <tr><td>Collaboration Status</td><td><span class="cross">✘</span> Unreliable</td><td><span class="cross">✘</span> No</td><td class="best-col"><span class="check">✔</span> Keeps Teams Active</td></tr>
-                        <tr><td>Schedule Management</td><td><span class="cross">✘</span> No</td><td><span class="cross">✘</span> No</td><td class="best-col"><span class="check">✔</span> Timed Intervals</td></tr>
-                        <tr><td>Operational Safety</td><td><span class="cross">✘</span> No</td><td><span class="cross">✘</span> No</td><td class="best-col"><span class="check">✔</span> Safe Zone</td></tr>
-                    </tbody>
-                </table>
-            </div>
-        </div>
-    </section>
-
-    <section id="reviews" style="background: #080808;">
-        <div class="container">
-            <div class="section-header reveal"><h2>User Feedback</h2></div>
-            <div class="grid-3">
-                <div class="feature-card reveal"><div class="stars">★★★★★</div><p class="review-text">"Essential for large data migrations. It keeps my VDI session active overnight so uploads don't fail due to timeouts."</p><p class="reviewer">- James L., Data Engineer</p></div>
-                <div class="feature-card reveal"><div class="stars">★★★★★</div><p class="review-text">"Helps me maintain 'Available' status on Teams while I'm reviewing physical documents or sketching on my iPad."</p><p class="reviewer">- Sarah K., UX Designer</p></div>
-                <div class="feature-card reveal"><div class="stars">★★★★★</div><p class="review-text">"I use the Safe Zone feature to keep my render machine awake without interfering with the 3D software window."</p><p class="reviewer">- David R., VFX Artist</p></div>
             </div>
         </div>
     </section>
@@ -369,8 +317,6 @@
                     <ul class="p-features">
                         <li><svg viewBox="0 0 24 24"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg> Full Software Access</li>
                         <li><svg viewBox="0 0 24 24"><path d="M9 16.17L4.83 12l-1.41L9 19 21 7l-1.41-1.41z"/></svg> All Activity Loops</li>
-                        <li><svg viewBox="0 0 24 24"><path d="M9 16.17L4.83 12l-1.41L9 19 21 7l-1.41-1.41z"/></svg> Break Logic</li>
-                        <li style="opacity:0.5"><svg viewBox="0 0 24 24" style="fill:#555"><path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg> No Priority Support</li>
                     </ul>
                     <a href="#download" class="btn-outline" style="display:block; text-align:center; margin-top:30px;">Download Trial</a>
                 </div>
@@ -380,9 +326,7 @@
                     <div class="p-price">$30<span> / month</span></div>
                     <ul class="p-features">
                         <li><svg viewBox="0 0 24 24"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg> <strong>Unlimited</strong> Runtime</li>
-                        <li><svg viewBox="0 0 24 24"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg> VPN & VDI Keep-Alive</li>
                         <li><svg viewBox="0 0 24 24"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg> Instant Key Delivery</li>
-                        <li><svg viewBox="0 0 24 24"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg> Priority Email Support</li>
                     </ul>
                     
                     <div id="payment-area">
@@ -395,8 +339,6 @@
                         <input type="email" id="userEmail" class="email-input" placeholder="name@company.com">
                         <button class="btn-success" onclick="sendLicense()">Send License Key</button>
                     </div>
-
-                    <div class="guarantee"><svg viewBox="0 0 24 24"><path d="M12 1L3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5l-9-3zm-2 16l-4-4 1.41-1.41L10 15.17l6.59-6.59L18 10l-8 8z"/></svg> 7-Day Money-Back Guarantee</div>
                 </div>
             </div>
         </div>
@@ -407,9 +349,7 @@
             <div class="section-header reveal"><h2>Frequently Asked Questions</h2></div>
             <div class="faq-grid">
                 <div class="faq-item reveal"><h4>Does this require Admin Rights?</h4><p>No. AutoFlow Plus runs as a portable standard application. It does not require installation or administrator privileges, making it safe for corporate laptops.</p></div>
-                <div class="faq-item reveal"><h4>Will this keep my VPN active?</h4><p>Yes. By simulating user input, AutoFlow Plus prevents the system from entering "Idle" state, which stops VPNs and remote sessions (Citrix, RDP) from timing out.</p></div>
-                <div class="faq-item reveal"><h4>Does it work with Microsoft Teams/Slack?</h4><p>Yes. The continuous activity input ensures your status remains "Available" or "Active," facilitating better communication availability for your team.</p></div>
-                <div class="faq-item reveal"><h4>Is it secure?</h4><p>AutoFlow Plus operates locally. It does not connect to the internet to transmit data, and the input simulation is confined to the standard Windows API.</p></div>
+                <div class="faq-item reveal"><h4>Is it secure?</h4><p>AutoFlow Plus operates locally. It does not connect to the internet to transmit data.</p></div>
             </div>
         </div>
     </section>
@@ -417,33 +357,15 @@
     <section id="download" style="text-align: center; border-bottom: none; padding-bottom: 150px;">
         <div class="container reveal">
             <h2 style="font-size: 36px; margin-bottom: 20px; color: white;">Optimize Your Workflow</h2>
-            <p style="color: var(--text-muted); margin-bottom: 40px;">Join thousands of professionals maintaining system continuity.</p>
             <a href="AutoFlowPlus.exe" class="btn-primary" style="padding: 18px 40px; font-size: 18px;">Download for Windows</a>
-            <p style="margin-top: 20px; font-size: 13px; color: #444;">Supports Windows 10 & 11 (64-bit)</p>
-            <div class="trust-badges" style="margin-top: 20px; justify-content: center;">
-                <div class="trust-item"><svg viewBox="0 0 24 24"><path d="M12 2L3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5l-9-3zm-2 16l-4-4 1.41-1.41L10 15.17l6.59-6.59L18 10l-8 8z"/></svg> VirusTotal Clean</div>
-                <div class="trust-item"><svg viewBox="0 0 24 24"><path d="M12 2L3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5l-9-3zm-2 16l-4-4 1.41-1.41L10 15.17l6.59-6.59L18 10l-8 8z"/></svg> Signed & Verified</div>
-            </div>
         </div>
     </section>
 
     <footer>
         <div class="container">
-            <div class="f-links">
-                <a href="terms.html">Terms of Service</a>
-                <a href="privacy.html">Privacy Policy</a>
-                <a href="refund.html">Refund Policy</a>
-                <a href="shipping.html">Delivery Policy</a>
-                <a href="contact.html">Contact Us</a>
-            </div>
             <p style="margin-top: 20px;">&copy; 2026 AutoFlow Plus.</p>
         </div>
     </footer>
-
-    <div class="mobile-sticky-cta">
-        <div style="font-weight:bold; color:white; font-size:16px;">AutoFlow Plus</div>
-        <a href="#pricing" class="btn-sm" style="background:var(--green); color:black; font-weight:700;">Get License</a>
-    </div>
 
     <script>
         window.addEventListener('scroll', reveal);
@@ -463,47 +385,34 @@
     </script>
 
     <script>
-    // 1. Define Global Variable for Subscription ID to link key to payment in DB
     let currentSubscriptionId = ""; 
 
     document.getElementById('rzp-button1').onclick = async function(e){
         e.preventDefault();
         
-        // 2. Request Subscription creation from the server
         try {
-            console.log("1. Requesting Subscription...");
+            // Fetch dynamic Key ID and Create Subscription
+            const keyRes = await fetch('/get-razorpay-key');
+            const keyData = await keyRes.json();
+
             const response = await fetch('/create-subscription', {
                 method: 'POST',
                 headers: {'Content-Type': 'application/json'}
             });
 
-            if (!response.ok) {
-                alert("Error connecting to server.");
-                console.error(response);
-                return;
-            }
+            if (!response.ok) throw new Error("Server connection error.");
 
             const data = await response.json();
-            
-            if(!data.id) {
-                alert("Could not create subscription ID. Check Render logs for Plan ID mismatch.");
-                return;
-            }
+            if(!data.id) throw new Error("Invalid Plan ID.");
 
-            // 3. Open Razorpay checkout configured for Subscriptions
             var options = {
-                "key": "rzp_live_S2IkZtv1DDkCr5", // Ensure this is your Live Key ID
-                "subscription_id": data.id, // Mandatory for recurring payments
+                "key": keyData.key, 
+                "subscription_id": data.id, 
                 "name": "AutoFlow Plus",
                 "description": "Monthly Professional License",
-                "image": "logo.png", 
                 "handler": async function (response){
-                    
-                    // Capture the ID locally to send with email later
                     currentSubscriptionId = response.razorpay_subscription_id;
-                    console.log("Subscription ID Captured:", currentSubscriptionId);
 
-                    // 4. Verify Payment signature on the backend
                     const verifyRes = await fetch('/verify-payment', {
                         method: 'POST',
                         headers: {'Content-Type': 'application/json'},
@@ -515,54 +424,35 @@
                     });
 
                     const verifyData = await verifyRes.json();
-
                     if (verifyData.success) {
-                        // Success: Show the form for license delivery
                         document.getElementById('payment-area').style.display = 'none';
                         document.getElementById('email-section').style.display = 'block';
-                    } else {
-                        alert("Payment verification failed. Please contact support.");
                     }
                 },
-                "prefill": {
-                    "name": "",
-                    "email": "",
-                    "contact": ""
-                },
-                "theme": {
-                    "color": "#3B8ED0"
-                }
+                "theme": { "color": "#3B8ED0" }
             };
             
             var rzp1 = new Razorpay(options);
-            rzp1.on('payment.failed', function (response){
-                    alert("Payment Failed: " + response.error.description);
-            });
             rzp1.open();
 
         } catch (error) {
-            console.error("PAYMENT ERROR:", error);
             alert("Connection error. Ensure your server is active.");
         }
     }
 
-    // Function to generate key, save to MongoDB, and send via Zoho.in
     async function sendLicense() {
         const email = document.getElementById('userEmail').value;
         const btn = document.querySelector('.btn-success');
         
         if (!email) { alert("Please enter a valid email."); return; }
-
         btn.innerText = "Sending...";
         
-        // Generate a random key; server will save it to database
         const licenseKey = 'LICENSE-' + Math.random().toString(36).substr(2, 9).toUpperCase();
 
         try {
             const res = await fetch('/send-license', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                // Sending subscriptionId to link records
                 body: JSON.stringify({ 
                     email: email, 
                     licenseKey: licenseKey,
@@ -579,12 +469,10 @@
                 btn.innerText = "Retry";
             }
         } catch (err) {
-            console.error(err);
             alert("Error sending email.");
             btn.innerText = "Retry";
         }
     }
     </script>
-
 </body>
 </html>
