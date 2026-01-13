@@ -19,14 +19,15 @@ mongoose.connect(process.env.MONGO_URI)
     .then(() => console.log('Connected to MongoDB Database'))
     .catch(err => console.error('Database Connection Error:', err));
 
-// Database Schema with Hardware Locking
+// Database Schema with Hardware Locking and Expiry
 const License = mongoose.model('License', new mongoose.Schema({
     email: String,
     licenseKey: String,
     subscriptionId: String,
-    hwid: { type: String, default: null }, // Stores the unique machine ID for locking
+    hwid: { type: String, default: null }, 
     status: { type: String, default: 'active' },
-    createdAt: { type: Date, default: Date.now }
+    createdAt: { type: Date, default: Date.now },
+    expiresAt: { type: Date, default: null } // Added for trial tracking
 }));
 
 // Razorpay Initialization
@@ -44,6 +45,74 @@ app.get('/get-razorpay-key', (req, res) => {
     res.json({ key: process.env.RAZORPAY_KEY_ID });
 });
 
+// Trial Registration Route (7 Days)
+app.post('/register-trial', async (req, res) => {
+    const { hwid } = req.body;
+    try {
+        const existingTrial = await License.findOne({ hwid: hwid });
+
+        if (existingTrial) {
+            return res.json({ success: false, message: "Trial already claimed on this device." });
+        }
+
+        const trialKey = `TRIAL-${Math.random().toString(36).substr(2, 9).toUpperCase()}`;
+        
+        // Calculate 7 days from now
+        const expiryDate = new Date();
+        expiryDate.setDate(expiryDate.getDate() + 7);
+
+        const newTrial = new License({
+            email: "Trial-User",
+            licenseKey: trialKey,
+            subscriptionId: "FREE-TRIAL",
+            hwid: hwid,
+            status: 'active',
+            expiresAt: expiryDate
+        });
+
+        await newTrial.save();
+        console.log(`7-Day Trial registered for HWID: ${hwid}`);
+        res.json({ success: true, message: "7-Day Trial activated!" });
+    } catch (error) {
+        console.error("TRIAL ERROR:", error);
+        res.status(500).json({ success: false, message: "Server error during trial setup." });
+    }
+});
+
+app.post('/verify-license', async (req, res) => {
+    const { licenseKey, hwid } = req.body;
+    try {
+        const license = await License.findOne({ licenseKey: licenseKey, status: 'active' });
+
+        if (!license) {
+            return res.json({ success: false, message: "Invalid or Expired License Key" });
+        }
+
+        // Check if trial has expired
+        if (license.expiresAt && new Date() > license.expiresAt) {
+            license.status = 'expired';
+            await license.save();
+            return res.json({ success: false, message: "Trial period has ended." });
+        }
+
+        if (!license.hwid) {
+            license.hwid = hwid; 
+            await license.save();
+            return res.json({ success: true, message: "License activated and locked." });
+        }
+
+        if (license.hwid === hwid) {
+            return res.json({ success: true, message: "Access Granted" });
+        } else {
+            return res.json({ success: false, message: "License already in use on another device." });
+        }
+    } catch (error) {
+        console.error("VERIFY ERROR:", error);
+        res.status(500).json({ success: false, message: "Server connection error." });
+    }
+});
+
+// Remaining routes (create-subscription, verify-payment, save-license)
 app.post('/create-subscription', async (req, res) => {
     try {
         const subscription = await razorpay.subscriptions.create({
@@ -54,7 +123,6 @@ app.post('/create-subscription', async (req, res) => {
         });
         res.json(subscription);
     } catch (error) {
-        console.error("RAZORPAY ERROR:", error);
         res.status(500).json(error);
     }
 });
@@ -73,46 +141,13 @@ app.post('/verify-payment', async (req, res) => {
     }
 });
 
-// Saves license data sent from the website after payment
 app.post('/save-license', async (req, res) => {
     const { email, licenseKey, subscriptionId } = req.body;
     try {
         await new License({ email, licenseKey, subscriptionId }).save();
-        console.log(`License record saved for ${email}`);
         res.json({ success: true });
     } catch (error) {
-        console.error("DATABASE ERROR:", error);
         res.status(500).json({ success: false });
-    }
-});
-
-// Verifies the key for the Python Tool and enforces hardware locking
-app.post('/verify-license', async (req, res) => {
-    const { licenseKey, hwid } = req.body;
-    try {
-        // Find the active license in the database
-        const license = await License.findOne({ licenseKey: licenseKey, status: 'active' });
-
-        if (!license) {
-            return res.json({ success: false, message: "Invalid or Expired License Key" });
-        }
-
-        // Hardware Locking Logic: Link to the first machine that uses it
-        if (!license.hwid) {
-            license.hwid = hwid; 
-            await license.save();
-            return res.json({ success: true, message: "License activated and locked to this device." });
-        }
-
-        // Verify that the machine matches the locked Hardware ID
-        if (license.hwid === hwid) {
-            return res.json({ success: true, message: "Access Granted" });
-        } else {
-            return res.json({ success: false, message: "License already in use on another device." });
-        }
-    } catch (error) {
-        console.error("VERIFY ERROR:", error);
-        res.status(500).json({ success: false, message: "Server connection error." });
     }
 });
 
