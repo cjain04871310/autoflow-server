@@ -116,7 +116,7 @@ app.post('/verify-license', async (req, res) => {
 app.post('/create-subscription', async (req, res) => {
     try {
         const subscription = await razorpay.subscriptions.create({
-            plan_id: 'plan_S26jZw0nJKA5uA', 
+            plan_id: 'plan_S5oqxEfT2FHEtI', 
             customer_notify: 1,
             total_count: 120, 
             quantity: 1,
